@@ -25,28 +25,32 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         // await csrf()
 
         setErrors([])
-    
+        // console.log(lms.auth.register);
+        // console.log(props);
+
         axios
             .post(lms.auth.register, props)
             .then((res) => {
                 console.log(res);
             })
             .catch(error => {
-                if (error.response.status !== 422) throw error
+                console.log('aaaaaa');
+                // if (error.response.status !== 422) throw error
 
-                setErrors(error.response.data.errors)
+                // setErrors(error.response.data.errors)
             })
     }
 
     const login = async ({ setErrors, setStatus, ...props }) => {
-        await csrf()
-
+        
         setErrors([])
         setStatus(null)
 
         axios
-            .post('/login', props)
-            .then(() => mutate())
+            .post(lms.auth.login, props)
+            .then((res) =>{
+                    console.log(res)
+            })
             .catch(error => {
                 if (error.response.status !== 422) throw error
 
