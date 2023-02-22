@@ -1,0 +1,6 @@
+.site-guest {
+    background: #a7d9dc url('./images/mbg13.svg') no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    /* background: url(/images/bg-noise.png); */
+}
