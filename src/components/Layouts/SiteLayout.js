@@ -8,6 +8,7 @@ const SiteLayout = ({ header, children }) => {
     return (
         <div className="min-h-screen bg-gray-100">
             <Navigation user={user} />
+            {user}
 
             {/* Page Heading */}
             <header className="bg-white shadow">

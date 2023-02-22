@@ -4,20 +4,22 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import lms from './lmsroutes';
 import loadCustomRoutes from 'next/dist/lib/load-custom-routes'
-
+import Cookies from 'js-cookie';
 export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     const router = useRouter()
 
-    // const { data: user, error, mutate } = useSWR('/api/user', () =>
-    //     axios
-    //         .get('/api/user')
-    //         .then(res => res.data)
-    //         .catch(error => {
-    //             if (error.response.status !== 409) throw error
+    const { data: user, error, mutate } = useSWR('/api/user', () =>
+            
+        JSON.parse(Cookies.get('currentuser'))
+        // axios
+        //     .get('/api/user')
+        //     .then(res => res.data)
+        //     .catch(error => {
+        //         if (error.response.status !== 409) throw error
 
-    //             router.push('/verify-email')
-    //         }),
-    // )
+        //         router.push('/verify-email')
+        //     }),
+    )
 
     // const csrf = () => axios.get('/sanctum/csrf-cookie')
 
@@ -31,7 +33,11 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         axios
             .post(lms.auth.register, props)
             .then((res) => {
-                console.log(res);
+                if(res.status){
+                    Cookies.set('token',res.data.token);
+                    Cookies.set('currentuser',JSON.stringify(res.data.user));
+                    router.push('/dashboard')
+                }
             })
             .catch(error => {
                 console.log('aaaaaa');
@@ -49,7 +55,12 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         axios
             .post(lms.auth.login, props)
             .then((res) =>{
-                    console.log(res)
+                
+                if(res.status){
+                    Cookies.set('token',res.data.token);
+                    Cookies.set('currentuser',JSON.stringify(res.data.user));
+                    router.push('/dashboard')
+                }
             })
             .catch(error => {
                 if (error.response.status !== 422) throw error
