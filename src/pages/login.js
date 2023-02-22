@@ -10,7 +10,7 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/auth'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-
+import { useLogin } from '@/hooks/useLogin'
 const Login = () => {
     const router = useRouter()
 
@@ -35,6 +35,7 @@ const Login = () => {
 
     const submitForm = async event => {
         event.preventDefault()
+        // console.log('yyyy');
 
         login({
             email,
