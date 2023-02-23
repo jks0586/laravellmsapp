@@ -8,17 +8,16 @@ import Cookies from 'js-cookie';
 export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     const router = useRouter()
 
-    const { data: user, error, mutate } = useSWR('/api/user', () =>
-            
-        JSON.parse(Cookies.get('currentuser'))
-        // axios
-        //     .get('/api/user')
-        //     .then(res => res.data)
-        //     .catch(error => {
-        //         if (error.response.status !== 409) throw error
+    // const user  = JSON.parse(Cookies.get('currentuser'))
 
-        //         router.push('/verify-email')
-        //     }),
+    const { data: user, error, mutate } = useSWR('/api/user', () =>
+        axios
+            .get('/api/user')
+            .then(res => JSON.parse(Cookies.get('currentuser'))
+             )
+            .catch(error => {
+
+            }),
     )
 
     // const csrf = () => axios.get('/sanctum/csrf-cookie')
@@ -111,7 +110,9 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
     const logout = async () => {
         if (! error) {
-            await axios.post('/logout').then(() => mutate())
+            Cookies.remove('token');
+            Cookies.remove('currentuser');
+            // await axios.post('/logout').then(() => mutate())
         }
 
         window.location.pathname = '/login'
@@ -129,7 +130,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     // }, [user, error]);
 
     return {
-        // user,
+        user,
         register,
         login,
         forgotPassword,

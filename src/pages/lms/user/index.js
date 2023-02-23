@@ -1,5 +1,4 @@
 import LmsLayout from '@/components/Layouts/LmsLayout'
-import AppLayout from '@/components/Layouts/LmsLayout'
 import Head from 'next/head'
 
 const Index = () => {
