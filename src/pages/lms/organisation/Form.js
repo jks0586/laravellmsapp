@@ -1,11 +1,28 @@
 import lms from '@/hooks/lmsroutes';
 import axios from '@/lib/axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState ,useRef} from 'react'
 import { useForm, Controller } from 'react-hook-form';
 import Select from 'react-select';
+import Tabs from '@/components/responsive-tabs';
+import Loadable from 'react-loadable';
+const Editor = Loadable({
+	loader: () => import('../../../components/Editor'),
+	loading() {
+	  return <div>Loading...</div>
+	}
+  });
+
 const Form = () => {
 const [organisations, setOrganisations] = useState();
 const [timezoneoptions, setTimezoneoptions] = useState();
+// let CKEditor;
+// let ClassicEditor;
+
+// useEffect(() => {
+//     import CKEditor from  '@ckeditor/ckeditor5-react';
+//     import ClassicEditor from 'ckeditor5-custom-build/build/ckeditor';
+// }, []);
+
 const { data, setData,register, control ,handleSubmit, post, processing, errors, reset } = useForm();
 //     {
 //     parent_organisation_id: '',
@@ -94,7 +111,68 @@ const submit=(data,e)=>{
     console.log(data);
 }
 const onError = (errors, e) => console.log(errors, e);
+const onckeditorHandleChange = (name,data) => {
+    
+};
 
+const presidents = [
+    { name: 'Welcome email', editor_id: 'welcome_email' },
+    { name: 'Set password email', editor_id: 'set_password_email' },
+    { name: 'New course email', editor_id: 'new_course_email' },
+    { name: 'Course complete email', editor_id: 'course_complete_email' },
+    { name: 'Terms & conditions', editor_id: 'terms_and_conditions' },
+    { name: 'Identity requirements', editor_id: 'identity_requirements' },
+    { name: 'Invoice address', editor_id: 'invoice_address' },
+    { name: 'Invoice footer', editor_id: 'invoice_thankyou_message' },
+    { name: 'Avetmiss privacy notice', editor_id: 'avetmiss_privacy_notice' },
+  ];
+
+  <Controller
+  control={control}
+  name="time_zone"
+  render={({ field: { onChange, onBlur, value, ref } }) => (
+      <Select
+      // value={timezoneoptions.filter(option => option.value === data.time_zone)}
+      options={timezoneoptions}
+      isSearchable={true}
+      placeholder='Select Time Zone'
+      // getOptionLabel={(onchnageTimeZone) => onchnageTimeZone['label']}
+      // getOptionValue={(onchnageTimeZone) => onchnageTimeZone['value']}
+      />
+  )}
+/>
+  function getTabs() {
+    return presidents.map((president, index) => ({
+      title: president.name,
+      getContent: () => {
+        let identifier=president.editor_id;
+        return <>
+        <Controller
+        control={control}
+        name={president.editor_id}
+        render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Editor 
+            id={president.editor_id}
+            value=''
+            onReady={(datareturn)=>{
+                onckeditorHandleChange(identifier,'');
+                document.getElementsByClassName('ck-editor__editable')[0].innerHTML='';
+            }}
+            onChange={(datareturn) => {
+                // onDescriptionChange('description',datareturn);
+            }}
+        />
+        )}
+        />
+        </>
+        
+      },
+      /* Optional parameters */
+      key: index,
+      tabClassName: 'tab',
+      panelClassName: 'panel',
+    }));
+  }
 
 return (
     <div className="p-3">
@@ -492,7 +570,7 @@ return (
                 </div>
             </div>
 
-
+            <Tabs items={getTabs()} />
       <button className="ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Save</button>
     </form>
     </div>
