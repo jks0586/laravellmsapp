@@ -46,26 +46,8 @@ function LmsSidebar({user}) {
   ];
 
   const openEvent=(e)=>{
-    e.preventDefault();
-    let pushroute='';
-    if(e.target.hasAttribute('href')){
-        // console.log(e.target.getAttribute('href'));
-        pushroute=e.target.getAttribute('href');
-        // console.log('a');
-    } else if(e.target.parentNode.getAttribute('href')){
-        // console.log(e.target.parentNode.getAttribute('href'));
-        pushroute=e.target.parentNode.getAttribute('href');
-        // console.log('b');
-    } else if(e.target.parentNode.parentNode.getAttribute('href')){
-        // console.log(e.target.parentNode.parentNode.getAttribute('href'));
-        pushroute=e.target.parentNode.parentNode.getAttribute('href');
-        // console.log('c');
-    }
-    console.log(pushroute);
-    if(pushroute!=='#' || pushroute!==''){
-        router.push(pushroute);
-    }
-    // 
+    console.log(e.target.parentNode);
+    
   }
   return (
     <div className="flex bg-sidebar">
@@ -85,17 +67,18 @@ function LmsSidebar({user}) {
             <li
               onClick={Menu.click==='logout'?logout:openEvent}
               key={index}
-              className={`flex  cursor-pointer items-center gap-x-4  p-1 text-lmsmenu font-black  hover:border-l-1 hover:border-white hover:bg-light-white border-b-2 border_sidebar_top_border border_sidebar_bottom_border text-slate-400 z-10 relative
+              className={`flex  cursor-pointer items-center gap-x-4  p-1 text-lmsmenu font-black  hover:border-l-1 hover:border-white hover:bg-light-white border-b-2 border_sidebar_top_border border_sidebar_bottom_border text-slate-400
                  ${
                 index === 0 && "bg-light-white"
               } `}
               href={Menu.linkto ? Menu.linkto : "#"}
             >
-              <a>
+              <Link href={Menu.linkto ? Menu.linkto : "#"} >
               {Menu.src}
-              </a>
+              </Link>
               <span
                 className={`${!isOpen && "hidden"} origin-left duration-200`}
+               
               >
                 {Menu.title}
               </span>

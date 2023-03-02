@@ -9,12 +9,12 @@ function classNames(...classes) {
 function LmsProfile({ user }) {
   return (
     <div id="lms-profile-div" className='flex'>
-        <button className="w-1/3 p-2 text-sm mx-auto px-4 content-center content-between rounded-none bg-teal-500 ..."><FaQuestionCircle /></button>
-
+        <button className="w-1/3 p-2 text-sm mx-auto px-4 content-center content-between rounded-none bg-teal-500 ...">
+            <FaQuestionCircle /></button>
 
         <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="inline-flex w-full justify-center  bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm  bg-orange-500">
+          <Menu.Button className="inline-flex w-full justify-center   px-4 py-2 text-sm font-medium text-gray-700 shadow-sm  bg-orange-500">
           <div><FaBell className='text-white' /></div>
 
           </Menu.Button>
@@ -93,7 +93,7 @@ function LmsProfile({ user }) {
 
         <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="inline-flex w-full justify-center  bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm  bg-sky-500">
+          <Menu.Button className="inline-flex w-full justify-center  px-4 py-2 text-sm font-medium text-gray-700 shadow-sm  bg-sky-500">
           <div><FaUser className='text-white'/></div>
 
           </Menu.Button>

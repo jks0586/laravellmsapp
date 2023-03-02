@@ -1,12 +1,11 @@
 import React from 'react'
 import LmsLayout from '@/components/Layouts/LmsLayout'
-import Breadcrumb from '@/components/lms/Breadcrumb'
-const admin = () => {
+const Index = () => {
   return (
     <LmsLayout>
-        <Breadcrumb title="test"/>
+        sdfsfgsl;gdk;
     </LmsLayout>
   )
 }
 
-export default admin
+export default Index

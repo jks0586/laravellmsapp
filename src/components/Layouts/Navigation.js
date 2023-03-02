@@ -12,7 +12,7 @@ import { useState } from 'react'
 
 const Navigation = ({ user }) => {
     const router = useRouter()
-
+console.log(user);
     const { logout } = useAuth()
 
     const [open, setOpen] = useState(false)
@@ -37,10 +37,20 @@ const Navigation = ({ user }) => {
                                 active={router.pathname === '/dashboard'}>
                                 Dashboard
                             </NavLink>
+
                         </div>
                     </div>
 
+
+                    <NavLink
+                        href="/lms"
+                        active={router.pathname === '/lms'}>
+                        Learning Management System
+                    </NavLink>
+                        
+                    
                     {/* Settings Dropdown */}
+                    
                     <div className="hidden sm:flex sm:items-center sm:ml-6">
                         <Dropdown
                             align="right"
