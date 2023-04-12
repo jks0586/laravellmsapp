@@ -1,5 +1,5 @@
 import { useAuth } from '@/hooks/auth'
-import LmsSidebar from './LmsSidebar_org'
+import LmsSidebar from './LmsSidebar'
 
 const LmsLayout = ({ header, children }) => {
     // const { user } = useAuth({ middleware: 'auth' })

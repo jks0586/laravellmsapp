@@ -62,6 +62,7 @@ function LmsSidebar({user}) {
         // console.log('c');
     }
     console.log(pushroute);
+    // alert('uuuu');
     if(pushroute!=='#' || pushroute!==''){
         router.push(pushroute);
     }

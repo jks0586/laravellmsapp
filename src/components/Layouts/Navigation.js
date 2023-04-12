@@ -12,7 +12,7 @@ import { useState } from 'react'
 
 const Navigation = ({ user }) => {
     const router = useRouter()
-console.log(user);
+    // console.log(user);
     const { logout } = useAuth()
 
     const [open, setOpen] = useState(false)

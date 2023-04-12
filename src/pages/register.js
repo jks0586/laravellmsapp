@@ -7,7 +7,7 @@ import InputError from '@/components/InputError'
 import Label from '@/components/Label'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/auth'
-import { useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 
 const Register = () => {
     const { register } = useAuth({
@@ -34,6 +34,11 @@ const Register = () => {
             setErrors,
         })
     }
+    
+    
+    useEffect((errors)=>{
+        console.log(errors);
+    },[errors]);
 
     return (
         <GuestLayout>

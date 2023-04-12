@@ -15,6 +15,8 @@ const Editor = Loadable({
 const Form = () => {
 const [organisations, setOrganisations] = useState();
 const [timezoneoptions, setTimezoneoptions] = useState();
+const orgref=useRef(0);
+const timzoneref=useRef(0);
 // let CKEditor;
 // let ClassicEditor;
 
@@ -24,59 +26,31 @@ const [timezoneoptions, setTimezoneoptions] = useState();
 // }, []);
 
 const { data, setData,register, control ,handleSubmit, post, processing, errors, reset } = useForm();
-//     {
-//     parent_organisation_id: '',
-//     name:  '',
-//     url:  '',
-//     active:  false,
-//     use_organisation_structure:  false,
-//     use_usi:  false,
-//     from_email: '',
-//     identity_verification_email: '',
-//     time_zone: '',
-//     trial_end: '',
-//     email_template: '',
-//     logo: null,
-//     background_image: null,
-//     background_position: '',
-//     background_size: '',
-//     background_repeat: '',
-//     background_color: '',
-//     print_logo: '',
-//     footer_text: '',
-//     restrict_by_ip: '',
-//     enable_eway: false,
-//     eway_test_mode: false,
-//     eway_customer_id: '',
-//     eway_user_name: '',
-//     enable_stripe: false,
-//     stripe_secret_key: '',
-//     stripe_publishable_key: '',
-//     welcome_email: '',
-//     set_password_email: '',
-//     new_course_email: '',
-//     course_complete_email: '',
-//     terms_and_conditions: '',
-//     identity_requirements: '',
-//     invoice_address: '',
-//     invoice_thankyou_message: '',
-//     avetmiss_privacy_notice: '',
-// }
-
 
 
 useEffect(() => {
+    if(orgref.current==0){
     axios.get(lms.organisation.autocomplete).then(response=>{
-        // console.log(response.data);
+        console.log(response.data);
         setOrganisations(response.data.organisations.data);
+        orgref.current=1;
     });
+    
+}
+    
+}, []);
+
+useEffect(() => {
+    if(timzoneref.current==0){
     axios.get(lms.timezone.autocomplete).then(response=>{
         // console.log(response.data);
         const timezones=response.data.timezones.data.map((value,index)=>{
             return { value: value.time_zone, label: value.time_zone }
         });
         setTimezoneoptions(timezones);
+        timzoneref.current=1;
     });
+}
 }, []);
 
 
@@ -127,20 +101,6 @@ const presidents = [
     { name: 'Avetmiss privacy notice', editor_id: 'avetmiss_privacy_notice' },
   ];
 
-  <Controller
-  control={control}
-  name="time_zone"
-  render={({ field: { onChange, onBlur, value, ref } }) => (
-      <Select
-      // value={timezoneoptions.filter(option => option.value === data.time_zone)}
-      options={timezoneoptions}
-      isSearchable={true}
-      placeholder='Select Time Zone'
-      // getOptionLabel={(onchnageTimeZone) => onchnageTimeZone['label']}
-      // getOptionValue={(onchnageTimeZone) => onchnageTimeZone['value']}
-      />
-  )}
-/>
   function getTabs() {
     return presidents.map((president, index) => ({
       title: president.name,
@@ -186,6 +146,7 @@ return (
                     </div>
                     <div className="md:w-3/4">
                     <Select
+                        instanceId="organisation_id"
                         className='option-parent_organisation_id'
                         id="parent_organisation_id"
                         name="parent_organisation_id"
@@ -318,6 +279,8 @@ return (
             name="time_zone"
             render={({ field: { onChange, onBlur, value, ref } }) => (
                 <Select
+                instanceId="time_zone"
+                id="time_zone"
                 // value={timezoneoptions.filter(option => option.value === data.time_zone)}
                 options={timezoneoptions}
                 isSearchable={true}
