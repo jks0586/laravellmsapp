@@ -4,14 +4,10 @@ import React, { useEffect, useState ,useRef} from 'react'
 import { useForm, Controller } from 'react-hook-form';
 import Select from 'react-select';
 import Tabs from '@/components/responsive-tabs';
-import Loadable from 'react-loadable';
-const Editor = Loadable({
-	loader: () => import('../../../components/Editor'),
-	loading() {
-	  return <div>Loading...</div>
-	}
-  });
+import loadable from '@loadable/component'
+import { ErrorMessage } from '@/components/ErrorMessage';
 
+const Editor = loadable(() => import('../../../components/Editor'))
 const Form = () => {
 const [organisations, setOrganisations] = useState();
 const [timezoneoptions, setTimezoneoptions] = useState();
@@ -25,7 +21,7 @@ const timzoneref=useRef(0);
 //     import ClassicEditor from 'ckeditor5-custom-build/build/ckeditor';
 // }, []);
 
-const { data, setData,register, control ,handleSubmit, post, processing, errors, reset } = useForm();
+const { data, setData,register, control ,handleSubmit, post, processing, errors, reset ,setValue} = useForm();
 
 
 useEffect(() => {
@@ -82,12 +78,39 @@ const onFileHandleChange=(event)=>{
 }
 
 const submit=(data,e)=>{
-    console.log(data);
+
+    axios.post(lms.organisation.store,data).then(response=>{
+        // console.log(response,'uuuu');
+        if(response.status){
+
+        } else {
+                // console.log(response.errors);
+                const errorkeys=Object.keys(response.errors);
+                // console.log(errorkeys);
+                errorkeys.map((val,index)=>{
+                        // console.log(val);
+                        const errorelement=document.getElementById(val);
+                        const divalert=document.createElement('div');
+                       
+                        let classesToAdd = [ 'flex','mb-4','text-sm','text-red-800','rounded-lg','bg-red-600','dark:bg-gray-800','dark:text-red-400'];
+                        divalert.classList.add(...classesToAdd);
+                        divalert.innerText=response.errors[val];
+                        errorelement.after(divalert);
+                        // console.log(errorelement);
+                });
+        }
+        // setOrganisations(response.data.organisations.data);
+        // orgref.current=1;
+    });
+    // console.log(data);
+
 }
 const onError = (errors, e) => console.log(errors, e);
 const onckeditorHandleChange = (name,data) => {
-    
+    // console.log(data);
+    setValue(name,data);
 };
+
 
 const presidents = [
     { name: 'Welcome email', editor_id: 'welcome_email' },
@@ -101,6 +124,13 @@ const presidents = [
     { name: 'Avetmiss privacy notice', editor_id: 'avetmiss_privacy_notice' },
   ];
 
+  useEffect(() => {
+    presidents.map((president, index) => {
+        // console.log(president.editor_id);
+        register(president.editor_id);
+    });
+  })
+
   function getTabs() {
     return presidents.map((president, index) => ({
       title: president.name,
@@ -110,16 +140,24 @@ const presidents = [
         <Controller
         control={control}
         name={president.editor_id}
-        render={({ field: { onChange, onBlur, value, ref } }) => (
+        
+        render={(
+            { field: { onChange, onBlur, value, ref } ,
+            fieldState: { invalid, isTouched, isDirty, error },
+            formState
+        }
+            ) => (
             <Editor 
             id={president.editor_id}
             value=''
             onReady={(datareturn)=>{
-                onckeditorHandleChange(identifier,'');
-                document.getElementsByClassName('ck-editor__editable')[0].innerHTML='';
+                onckeditorHandleChange(identifier,datareturn);
+                // document.getElementsByClassName('ck-editor__editable')[0].innerHTML='';
             }}
-            onChange={(datareturn) => {
-                // onDescriptionChange('description',datareturn);
+            
+            onChange={(datareturn)=>{
+                onckeditorHandleChange(identifier,datareturn);
+                // document.getElementsByClassName('ck-editor__editable')[0].innerHTML='';
             }}
         />
         )}
@@ -156,6 +194,7 @@ return (
                         placeholder='Select Oraganisation'
                         getOptionLabel={(onChangeOrganisation) => onChangeOrganisation['label']}
                         getOptionValue={(onChangeOrganisation) => onChangeOrganisation['value']}
+                        {...register('parent_organisation_id')}
                     />
 
                     </div>
