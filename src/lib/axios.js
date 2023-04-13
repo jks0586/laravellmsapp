@@ -4,8 +4,7 @@ const axios = Axios.create({
     baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
     headers: {
         'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json',
-        'Accept' : 'application/json',
+        'Content-Type': 'multipart/form-data',
     },
     withCredentials: false,
 })
@@ -13,6 +12,7 @@ const axios = Axios.create({
 // Add a request interceptor
 axios.interceptors.request.use(function (config) {
     // Do something before request is sent
+    // console.log(config,'config');
     return config;
   }, function (error) {
     // Do something with request error

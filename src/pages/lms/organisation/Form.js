@@ -6,7 +6,7 @@ import Select from 'react-select';
 import Tabs from '@/components/responsive-tabs';
 import loadable from '@loadable/component'
 import { ErrorMessage } from '@/components/ErrorMessage';
-
+import { toast } from 'react-toastify';
 const Editor = loadable(() => import('../../../components/Editor'))
 const Form = () => {
 const [organisations, setOrganisations] = useState();
@@ -51,6 +51,14 @@ useEffect(() => {
 
 
 
+const str2bool = (value) => {
+    if (value && typeof value === "string") {
+         if (value.toLowerCase() === "true") return true;
+         if (value.toLowerCase() === "false") return false;
+    }
+    return value;
+ }
+
 const onChangeOrganisation = (data) => {
     console.log(data);
     // setData('parent_organisation_id', data.value);
@@ -63,9 +71,16 @@ const onChangeOrganisation = (data) => {
 // const onchnageTimeZone=(data)=>{
 //     setData('time_zone',data.value);
 // }
+const onHandleChange=(event)=>{
 
-const onHandleChange = (event) => {
-    // setData(event.target.name, event.target.type === 'checkbox' ? event.target.value : event.target.value);
+}
+
+const onHandleClick= (event) => {
+    // alert('hhhh');
+    // setValue(name,data);
+    const { checked } = event.target
+    // alert(checked);
+    setValue(event.target.name, event.target.type === 'checkbox' ? checked : event.target.value);
     // let element = document.getElementById(event.target.id).nextElementSibling;
     // if(element && event.target.name!=='send_password_email'){
     //     element.remove();
@@ -79,12 +94,26 @@ const onFileHandleChange=(event)=>{
 
 const submit=(data,e)=>{
 
+    // console.log(data); 
+    // return true;
+
+    // const formData = new FormData();
+    // formData.append("logo", data.logo[0]);
+    // formData.append("background_image", data.background_image[0]);
+    // console.log(formData);
+    // return false;
     axios.post(lms.organisation.store,data).then(response=>{
         // console.log(response,'uuuu');
         if(response.status){
-
+            console.log(response);
+            toast(response.message, { hideProgressBar: true, autoClose: 2000, type: 'success' ,position:'top-right' })
         } else {
                 // console.log(response.errors);
+                const allElements = document.querySelectorAll('.errormessage');
+                allElements.forEach((element) => {
+                    element.remove();
+                });
+
                 const errorkeys=Object.keys(response.errors);
                 // console.log(errorkeys);
                 errorkeys.map((val,index)=>{
@@ -92,7 +121,7 @@ const submit=(data,e)=>{
                         const errorelement=document.getElementById(val);
                         const divalert=document.createElement('div');
                        
-                        let classesToAdd = [ 'flex','mb-4','text-sm','text-red-800','rounded-lg','bg-red-600','dark:bg-gray-800','dark:text-red-400'];
+                        let classesToAdd = ['errormessage','flex','mb-4','text-sm','text-white','bg-red-600','dark:bg-gray-800','dark:text-red-400'];
                         divalert.classList.add(...classesToAdd);
                         divalert.innerText=response.errors[val];
                         errorelement.after(divalert);
@@ -174,7 +203,7 @@ const presidents = [
 
 return (
     <div className="p-3">
-    <form className="w-full" onSubmit={handleSubmit(submit, onError)}>
+    <form className="w-full" id="organisation-form" onSubmit={handleSubmit(submit, onError)} enctype = "multipart/form data">
                 {/* orgnaisation parent id field */}
                 <div className="md:flex md:items-center mb-2">
                     <div className="md:w-1/4">
@@ -242,7 +271,7 @@ return (
                 <input className="appearance-none border-2 border-gray-200 rounded  py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#273135]" id="active"
                 type="checkbox"
                 {...register("active")}
-
+                onChange={onHandleClick}
                 />
                 </div>
             </div>
@@ -257,7 +286,7 @@ return (
                 </div>
                 <div className="md:w-3/4">
                 <input className="appearance-none border-2 border-gray-200 rounded  py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#273135]" id="use_organisation_structure" type="checkbox" {...register("use_organisation_structure")}
-                value='1'
+                onChange={onHandleClick}
                 />
                 </div>
             </div>
@@ -271,7 +300,7 @@ return (
                 </div>
                 <div className="md:w-3/4">
                 <input className="appearance-none border-2 border-gray-200 rounded  py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#273135]" id="use_usi" type="checkbox" {...register("use_usi")}
-                value='1'
+                onChange={onHandleClick}
                 />
                 </div>
             </div>
@@ -370,7 +399,7 @@ return (
             </label>
             </div>
             <div className="md:w-3/4">
-            <input className="appearance-none border-1 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#273135]" id="logo" type="file" {...register("logo")}
+            <input className="appearance-none border-1 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#273135]" id="logo" name="logo" type="file" {...register("logo")}
             />
             
             </div>
@@ -490,6 +519,7 @@ return (
                 </div>
                 <div className="md:w-3/4">
                 <input className="appearance-none border-2 border-gray-200 rounded  py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#273135]" id="enable_eway" type="checkbox" {...register("enable_eway")}
+                onChange={onHandleClick}
                 />
                 </div>
             </div>
@@ -503,6 +533,7 @@ return (
                 </div>
                 <div className="md:w-3/4">
                 <input className="appearance-none border-2 border-gray-200 rounded  py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#273135]" id="eway_test_mode" type="checkbox" {...register("eway_test_mode")}
+                onChange={onHandleClick}
                 />
                 </div>
             </div>
@@ -542,6 +573,7 @@ return (
                 </div>
                 <div className="md:w-3/4">
                 <input className="appearance-none border-2 border-gray-200 rounded  py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#273135]" id="enable_stripe" type="checkbox" {...register("enable_stripe")}
+                onChange={onHandleClick}
                 />
                 </div>
             </div>
