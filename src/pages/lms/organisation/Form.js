@@ -7,12 +7,16 @@ import Tabs from '@/components/responsive-tabs';
 import loadable from '@loadable/component'
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { toast } from 'react-toastify';
+import Datepicker from "react-tailwindcss-datepicker";
+import { useRouter } from 'next/navigation';
 const Editor = loadable(() => import('../../../components/Editor'))
 const Form = () => {
 const [organisations, setOrganisations] = useState();
 const [timezoneoptions, setTimezoneoptions] = useState();
+const [trialEnd, setTrialEnd] = useState();
 const orgref=useRef(0);
 const timzoneref=useRef(0);
+
 // let CKEditor;
 // let ClassicEditor;
 
@@ -27,13 +31,14 @@ const { data, setData,register, control ,handleSubmit, post, processing, errors,
 useEffect(() => {
     if(orgref.current==0){
     axios.get(lms.organisation.autocomplete).then(response=>{
-        console.log(response.data);
-        setOrganisations(response.data.organisations.data);
+        const organisationoptions=response.data.organisations.data.map((value,index)=>{
+            return { value: value.id, label: value.name }
+        });
+        setOrganisations(organisationoptions);
         orgref.current=1;
     });
     
 }
-    
 }, []);
 
 useEffect(() => {
@@ -60,19 +65,22 @@ const str2bool = (value) => {
  }
 
 const onChangeOrganisation = (data) => {
-    console.log(data);
-    // setData('parent_organisation_id', data.value);
-    // let changetext=document.querySelector('.option-parent_organisation_id>div>div>div');
-    // if(data.label){
-    //      changetext.textContent=data.label;
-    // }
+    // console.log(data);
+    setValue('parent_organisation_id', data.value);
+    let changetext=document.querySelector('.option-parent_organisation_id>div>div>div');
+    if(data.label){
+         changetext.textContent=data.label;
+    }
 }
 
 // const onchnageTimeZone=(data)=>{
 //     setData('time_zone',data.value);
 // }
-const onHandleChange=(event)=>{
-
+const onHandleChange=(name,value)=>{ 
+        setValue(name, value.startDate);
+        // console.log(value.startDate);
+        setTrialEnd(value.startDate);
+        // console.log(value);
 }
 
 const onHandleClick= (event) => {
@@ -88,25 +96,20 @@ const onHandleClick= (event) => {
     // console.log(event.target.name,event.target.value);
 };
 
-const onFileHandleChange=(event)=>{
-    console.log(e);
+const onFileHandleChange=(e)=>{
+    // console.log(e.target.files[0]);
+    setValue(e.target.name, e.target.files[0]);
+
 }
 
 const submit=(data,e)=>{
 
-    // console.log(data); 
-    // return true;
-
-    // const formData = new FormData();
-    // formData.append("logo", data.logo[0]);
-    // formData.append("background_image", data.background_image[0]);
-    // console.log(formData);
-    // return false;
     axios.post(lms.organisation.store,data).then(response=>{
-        // console.log(response,'uuuu');
+        
         if(response.status){
-            console.log(response);
+            
             toast(response.message, { hideProgressBar: true, autoClose: 2000, type: 'success' ,position:'top-right' })
+            useRouter.push(lms.organisation.admin);
         } else {
                 // console.log(response.errors);
                 const allElements = document.querySelectorAll('.errormessage');
@@ -120,7 +123,6 @@ const submit=(data,e)=>{
                         // console.log(val);
                         const errorelement=document.getElementById(val);
                         const divalert=document.createElement('div');
-                       
                         let classesToAdd = ['errormessage','flex','mb-4','text-sm','text-white','bg-red-600','dark:bg-gray-800','dark:text-red-400'];
                         divalert.classList.add(...classesToAdd);
                         divalert.innerText=response.errors[val];
@@ -203,7 +205,7 @@ const presidents = [
 
 return (
     <div className="p-3">
-    <form className="w-full" id="organisation-form" onSubmit={handleSubmit(submit, onError)} enctype = "multipart/form data">
+    <form className="w-full" id="organisation-form" onSubmit={handleSubmit(submit, onError)} encType = "multipart/form data">
                 {/* orgnaisation parent id field */}
                 <div className="md:flex md:items-center mb-2">
                     <div className="md:w-1/4">
@@ -223,7 +225,7 @@ return (
                         placeholder='Select Oraganisation'
                         getOptionLabel={(onChangeOrganisation) => onChangeOrganisation['label']}
                         getOptionValue={(onChangeOrganisation) => onChangeOrganisation['value']}
-                        {...register('parent_organisation_id')}
+                        
                     />
 
                     </div>
@@ -371,9 +373,27 @@ return (
             </label>
             </div>
             <div className="md:w-3/4">
-            <input className="appearance-none border-1 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#273135]" id="trial_end" type="text" {...register("trial_end")}
-            onChange={onHandleChange}
+            <Controller
+            control={control}
+            name="trial_end"
+            render={(
+                { field: { onChange, onBlur, value, ref } ,
+                fieldState: { invalid, isTouched, isDirty, error },
+                formState
+            }
+            ) => (
+                <Datepicker
+                    asSingle={true} 
+                    useRange={false} 
+                    onChange={(e) => onHandleChange("trial_end", e)}
+                    id="trial_end"  
+                    name="trial_end"
+                    value={value || ""}
+                    placeholder={value || "Select Trial End date"}
+                />
+            )}
             />
+            
             </div>
         </div>
 
@@ -386,7 +406,6 @@ return (
             </div>
             <div className="md:w-3/4">
             <input className="appearance-none border-1 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#273135]" id="email_template" type="text" {...register("email_template")}
-            onChange={onHandleChange}
             />
             </div>
         </div>
@@ -400,6 +419,7 @@ return (
             </div>
             <div className="md:w-3/4">
             <input className="appearance-none border-1 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#273135]" id="logo" name="logo" type="file" {...register("logo")}
+            onChange={onFileHandleChange}
             />
             
             </div>
@@ -414,6 +434,7 @@ return (
             </div>
             <div className="md:w-3/4">
             <input className="appearance-none border-1 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#273135]" id="background_image" type="file"  {...register("background_image")}
+            onChange={onFileHandleChange}
             />
            
                 </div>
