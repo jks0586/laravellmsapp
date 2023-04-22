@@ -12,6 +12,11 @@ const lms={
     auth:{
         register:process.env.NEXT_PUBLIC_BACKEND_URL+'/api/register',
         login:process.env.NEXT_PUBLIC_BACKEND_URL+'/api/login',
+    },
+    country:{
+        autocomplete:process.env.NEXT_PUBLIC_BACKEND_URL+'/api/country/autocomplete',
+        create:process.env.NEXT_PUBLIC_BACKEND_URL+'/api/country/create',
+        store:process.env.NEXT_PUBLIC_BACKEND_URL+'/api/country/store',
     }
 
 }
